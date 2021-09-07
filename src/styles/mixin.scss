@@ -1,0 +1,42 @@
+//这里放混入的一些样式
+@mixin scrollBar {
+  &::-webkit-scrollbar-track-piece {
+    // 内层滚动漕
+    background: #c5c1c1;
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar {
+    //主体部分
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    //滑块
+    background: #1DD3FF;
+    width: 100%;
+    border-radius: 50%;
+  }
+
+  &::-webkit-scrollbar-track {
+    //外层轨道
+    border-radius: 0;
+    -webkit-box-shadow: inset 0 0 6px transparent
+  }
+}
+
+@mixin no-wrap {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@mixin line-clamp($lines) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+}

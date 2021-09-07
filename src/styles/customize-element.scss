@@ -1,0 +1,91 @@
+// elementui样式修改 这放对elementui样式的修改
+.el-loading-spinner {
+
+  .el-icon-loading {
+    font-size: .26rem;
+    color: white;
+  }
+
+  .el-loading-text {
+    font-size: .16rem;
+    color: white;
+  }
+}
+
+.select-box {
+
+  //这里对大数据视图的select组件进行修改
+  .el-select {
+    background: transparent;
+
+    .el-input {
+      background: transparent;
+
+      input {
+        background: transparent;
+        height: 30px;
+        color: white;
+      }
+
+      .el-input__inner {
+        border: 2px solid rgba(2, 100, 210, 0.8);
+      }
+
+      .el-input__icon {
+        line-height: 30px;
+      }
+    }
+  }
+}
+
+.dark {
+  .el-select-dropdown {
+    background-color: rgba(34, 86, 140, 0.7) !important;
+    border: none !important;
+
+    .el-select-dropdown__item {
+      color: white !important;
+
+      &:hover {
+        background-color: rgba(34, 86, 140) !important;
+      }
+
+    }
+
+    .selected {
+      color: rgb(239, 183, 21) !important;
+    }
+
+    .hover {
+      background-color: rgba(34, 86, 140) !important;
+    }
+
+    .popper__arrow {
+      //下拉框上边的小三角
+      display: none !important;
+    }
+  }
+}
+
+
+.el-input {
+  background: transparent;
+
+  input {
+    background: transparent;
+    height: 30px;
+    color: black;
+  }
+
+  .el-input__inner {
+    // border: 2px solid rgba(2, 100, 210, 0.8);
+  }
+
+  .el-input__icon {
+    line-height: 30px;
+  }
+}
+
+
+
+// }

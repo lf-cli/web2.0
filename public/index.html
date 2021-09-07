@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="<%= BASE_URL %>lanfeng.png">
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+</head>
+
+<body class="dark">
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
+      Please enable it to continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+<script>
+  var docEl = document.documentElement,
+    //当设备的方向变化（设备横向持或纵向持）此事件被触发。绑定此事件时，
+    //注意现在当浏览器不支持orientationChange事件的时候我们绑定了resize 事件。
+    //总来的来就是监听当前窗口的变化，一旦有变化就需要重新设置根字体的值
+    resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+    recalc = function () {
+      //设置根字体大小
+      docEl.style.fontSize = 100 * (docEl.clientWidth / 1920) + 'px';
+    };
+
+  //绑定浏览器缩放与加载时间
+  window.addEventListener(resizeEvt, recalc, false);
+  document.addEventListener('DOMContentLoaded', recalc, false);
+</script>
+
+</html>
