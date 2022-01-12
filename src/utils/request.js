@@ -121,7 +121,12 @@ function buildHttpClient(params) {
     }
     //为请求加上公共请求参数 比如某些请求需要加上统一的key或者secretId等情况
     if (config.method === 'post') {
-      let data = qs.parse(config.data)
+      let data
+      if (Array.isArray(config.data)) {
+        data = config.data
+      } else {
+        data = qs.parse(config.data)
+      }
       Object.assign(data, commonParams)
       config.data = data
     }
@@ -180,7 +185,7 @@ function buildHttpClient(params) {
       allowRequest(reqList, error.config ? error.config.url : '')
     }, 300);
     if (error.toString().indexOf('401') > -1) {
-      error.message = 'token过期，请重新登陆'
+      error.message = 'token过期，请重新登录'
       setTimeout(() => {
         jumToLogin()
       }, 200);
@@ -242,7 +247,7 @@ function request(url, params, method, options) {
     if (method === 'get') {
       data = { params }
     }
-    if (method === 'post') {
+    if (method === 'post' || method === 'delete') {
       data = { data: params }
     }
     instance({
@@ -306,6 +311,10 @@ function delTime(data) {
 export function post(requestParams) {
   let { url, data, options } = requestParams
   return request(url, data, 'post', options)
+}
+export function del(requestParams) {
+  let { url, data, options } = requestParams
+  return request(url, data, 'delete', options)
 }
 /**
  * 创建get请求

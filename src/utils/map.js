@@ -67,7 +67,7 @@ export function setMarkerCenter(markers, format) {
     }
     let lngCenter = lngSum / stationData.length;
     let latCenter = latSum / stationData.length;
-    this.map.setCenter([lngCenter + "", latCenter + ""]);
+    return [lngCenter, latCenter]
   }
 }
 
@@ -83,14 +83,14 @@ export function textMarkers(name, position, style = {}) {
     "padding": "5px 10px",
   }
   let newStyle = Object.assign(textStyle, style)
-  let text = new AMap.Text({
+  const text = new AMap.Text({
     text: name,
     anchor: "center",
     style: newStyle,
     position: position,
     zIndex: 100,
   });
-  text.setMap(this.map);
+  return text
 }
 
 //坐标系转换
@@ -209,7 +209,7 @@ function transformLon(x, y) {
  * Loader for AMap
  * @param {(img)} 底图图片地址
  */
-export function setBaseMap(img, needDel = false) {
+export function setBaseMap(img) {
   // let baseSize = [700, 774]  //以屏幕分辨率1440为基准 此时图片大小应该是700*774 以此比例适配
   // let baseAuther = [350, 380]
   let baseSize = [455, 553]  //以屏幕分辨率1440为基准 此时图片大小应该是700*774 以此比例适配
@@ -250,107 +250,61 @@ export function setBaseMap(img, needDel = false) {
     ],
     zoomStyleMapping: zoomStyleMapping1,
   })
-  if (needDel) {
-    this.ElasticMarker.push(baseMapImage)
-  }
-  this.map.add(baseMapImage)
-}
-export function setBaseMap1(img, needDel = false) {
-  // let baseSize = [700, 774]  //以屏幕分辨率1440为基准 此时图片大小应该是700*774 以此比例适配
-  // let baseAuther = [350, 380]
-  let baseSize = [500, 320]  //以屏幕分辨率1440为基准 此时图片大小应该是700*774 以此比例适配
-  let baseAuther = [240, 130]
-  let body = document.body.getClientRects()
-  let { width, height } = body[0]
-  let scaleTimes = width / 1440
-  let curSize = [700 * scaleTimes, 774 * scaleTimes]
-  let curAuther = [350 * scaleTimes, 380 * scaleTimes]
-  var zoomStyleMapping1 = {  //地图不同级别下 对应使用第几个样式
-    5: 0,
-    6: 0,
-    7: 0,
-    8: 0,
-    9: 0,
-    10: 0,
-    11: 0,
-    18: 0,
-    19: 0,
-    20: 0,
-  }
-  var baseMapImage = new AMap.ElasticMarker({
-    position: [113.38019, 30.353799], //这个坐标是用来约束自己位置的坐标 与地图坐标无关
-    styles: [
-      {
-        icon: {
-          img: img,
-          size: baseSize,
-          ancher: baseAuther,//锚点，图标原始大小下锚点所处的位置，相对左上角
-          // imageOffset: [-456, 0],////可缺省，当使用精灵图时可用，标示图标在整个图片中左上角的位置
-          // imageSize:[512,512], //可缺省，当使用精灵图时可用，整张图片的大小
-          fitZoom: 9.5,
-          scaleFactor: 2,  ////地图放大一级的缩放比例系数
-          maxScale: 30,//最大放大比例
-          minScale: 0.125,//最小放大比例
-        },
-      },
-    ],
-    zoomStyleMapping: zoomStyleMapping1,
-  })
-  if (needDel) {
-    this.ElasticMarker.push(baseMapImage)
-  }
-  this.map.add(baseMapImage)
+  return baseMapImage
 }
 
 //添加遮罩层
 export function addDistrictMask(nameArray, curStyle) {
-  AMap.plugin('AMap.DistrictSearch', () => {
-    let holes = []
-    const district = new AMap.DistrictSearch({
-      extensions: 'all',
-      subdistrict: 1,
-    })
-    for (let i = 0; i < nameArray.length; i++) {
-      district.search(nameArray[i], (status, result) => {
-        holes = holes.concat(result.districtList[0].boundaries)
+  return new Promise((resolve, reject) => {
+    AMap.plugin('AMap.DistrictSearch', () => {
+      let holes = []
+      const district = new AMap.DistrictSearch({
+        extensions: 'all',
+        subdistrict: 1,
       })
-    }
-    setTimeout(() => {
-      if (this.maskPolygon) {
-        this.map.remove(this.maskPolygon)
+      for (let i = 0; i < nameArray.length; i++) {
+        district.search(nameArray[i], (status, result) => {
+          holes = holes.concat(result.districtList[0].boundaries)
+        })
       }
+      setTimeout(() => {
+        if (this.maskPolygon) {
+          this.map.remove(this.maskPolygon)
+        }
 
-      const outer = [
-        new AMap.LngLat(-360, 90, true),
-        new AMap.LngLat(-360, -90, true),
-        new AMap.LngLat(360, -90, true),
-        new AMap.LngLat(360, 90, true),
-      ]
-      const pathArray = [outer]
-      pathArray.push.apply(pathArray, holes)
-      let defaultStyle = {
-        fillColor: 'rgb(68,126,178)', //map 1.4.15属性不能用transpant
-        strokeOpacity: 1,
-        fillOpacity: 0.5,
-        strokeColor: '#2b8cbe',
-        strokeWeight: 1,
-        strokeStyle: 'dashed',
-        strokeDasharray: [5, 5],
-      }
-      let style = Object.assign(defaultStyle, curStyle)
-      this.maskPolygon = new AMap.Polygon({
-        map: this.map,
-        path: pathArray,
-        fillColor: style.fillColor,
-        strokeOpacity: style.strokeOpacity,
-        fillOpacity: style.fillOpacity,
-        strokeColor: style.strokeColor,
-        strokeWeight: style.strokeWeight,
-        strokeStyle: style.strokeStyle,
-        strokeDasharray: style.strokeDasharray,
-      })
-    }, 1000)
+        const outer = [
+          new AMap.LngLat(-360, 90, true),
+          new AMap.LngLat(-360, -90, true),
+          new AMap.LngLat(360, -90, true),
+          new AMap.LngLat(360, 90, true),
+        ]
+        const pathArray = [outer]
+        pathArray.push.apply(pathArray, holes)
+        let defaultStyle = {
+          fillColor: 'rgb(68,126,178)', //map 1.4.15属性不能用transpant
+          strokeOpacity: 1,
+          fillOpacity: 0.5,
+          strokeColor: '#2b8cbe',
+          strokeWeight: 1,
+          strokeStyle: 'dashed',
+          strokeDasharray: [5, 5],
+        }
+        let style = Object.assign(defaultStyle, curStyle)
+        const maskPolygon = new AMap.Polygon({
+          path: pathArray,
+          fillColor: style.fillColor,
+          strokeOpacity: style.strokeOpacity,
+          fillOpacity: style.fillOpacity,
+          strokeColor: style.strokeColor,
+          strokeWeight: style.strokeWeight,
+          strokeStyle: style.strokeStyle,
+          strokeDasharray: style.strokeDasharray,
+        })
+        resolve(maskPolygon)
+      }, 1000)
+    })
   })
+
 }
 //行政区划 显示边界
 /**
@@ -359,43 +313,45 @@ export function addDistrictMask(nameArray, curStyle) {
  * @param {*} curStyle 
  */
 export function searchDistrict(districtArray, curStyle) {
-  let defaultStyle = {
-    strokeWeight: 1,
-    fillOpacity: 0,
-    fillColor: '#ccebc5',
-    strokeColor: '#d8d8d8',
-    strokeStyle: 'solid',
-    strokeOpacity: 0.7,
-  }
-  let style = Object.assign(defaultStyle, curStyle)
-  AMap.plugin('AMap.DistrictSearch', () => {
-    const district = new AMap.DistrictSearch({
-      extensions: 'all',
-      subdistrict: 1,
-    })
-    for (let i = 0; i < districtArray.length; i++) {
-      district.search(districtArray[i], (status, result) => {
-        var bounds = result.districtList[0].boundaries
-        var polygons = []
-        if (bounds) {
-          for (var i = 0, l = bounds.length; i < l; i++) {
-            // 生成行政区划polygon
-            var polygon = new AMap.Polygon({
-              map: this.map,
-              strokeWeight: style.strokeWeight,
-              path: bounds[i],
-              fillOpacity: style.fillOpacity,
-              fillColor: style.fillColor,
-              strokeColor: style.strokeColor,
-              strokeStyle: style.strokeStyle,
-              strokeOpacity: style.strokeOpacity,
-            })
-            polygons.push(polygon)
-          }
-        }
-      })
+  return new Promise((resolve, reject) => {
+    let defaultStyle = {
+      strokeWeight: 1,
+      fillOpacity: 0,
+      fillColor: '#ccebc5',
+      strokeColor: '#d8d8d8',
+      strokeStyle: 'solid',
+      strokeOpacity: 0.7,
     }
+    let style = Object.assign(defaultStyle, curStyle)
+    AMap.plugin('AMap.DistrictSearch', () => {
+      const district = new AMap.DistrictSearch({
+        extensions: 'all',
+        subdistrict: 1,
+      })
+      for (let i = 0; i < districtArray.length; i++) {
+        district.search(districtArray[i], (status, result) => {
+          var bounds = result.districtList[0].boundaries
+          var polygons = []
+          if (bounds) {
+            for (var i = 0, l = bounds.length; i < l; i++) {
+              // 生成行政区划polygon
+              var polygon = new AMap.Polygon({
+                strokeWeight: style.strokeWeight,
+                path: bounds[i],
+                fillOpacity: style.fillOpacity,
+                fillColor: style.fillColor,
+                strokeColor: style.strokeColor,
+                strokeStyle: style.strokeStyle,
+                strokeOpacity: style.strokeOpacity,
+              })
+              resolve(polygon)
+            }
+          }
+        })
+      }
+    })
   })
+
 }
 
 
