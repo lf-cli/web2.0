@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     登录页面
-
     <svg-icon icon-class="zip" class="svgIcon" />
   </div>
 </template>
@@ -11,7 +10,8 @@ export default {
   name: 'Login',
   data() {
     return {}
-  }
+  },
+  created() {}
 }
 </script>
 

@@ -111,6 +111,7 @@ function buildHttpClient(params) {
   let commonParams = {}
   service.interceptors.request.use(config => {
     let cancel
+    // eslint-disable-next-line no-return-assign
     config.cancelToken = new axios.CancelToken(c => cancel = c)
 
     config.onUploadProgress = function (e) {
@@ -162,7 +163,7 @@ function buildHttpClient(params) {
         duration: 2000
       })
       if (response.status === 500 || response.status === 502 || response.status === 504) {
-        MessageBox.confirm('登录超时，是否需要返回重新登录？', '确认', {
+        this.$confirm('登录超时，是否需要返回重新登录？', '确认', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -222,7 +223,7 @@ function request(url, params, method, options) {
     loading: false,
     showError: true,
     ContentType: 'json',
-    baseURL: '/api',
+    baseURL: process.env.VUE_APP_BASE_API,
     setCommonData: false,
     commonParams: {},
     cancelExitRequest: false,
@@ -279,6 +280,7 @@ function request(url, params, method, options) {
  * @param data 传入全部数据 将时间戳转为时间字符串
  * */
 
+// eslint-disable-next-line no-unused-vars
 function delTime(data) {
   if (!data || typeof (data) !== 'object') {
     return
@@ -288,7 +290,7 @@ function delTime(data) {
     if (data[key] && typeof (data[key]) === 'object') {
       result[key] = delTime(data[key])
     } else {
-      if (typeof (data[key]) === 'number' && data[key].length == 13) {
+      if (typeof (data[key]) === 'number' && data[key].length === 13) {
         data[key] = parseTime(data[key])
       }
       result[key] = data[key]
