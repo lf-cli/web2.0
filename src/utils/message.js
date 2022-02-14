@@ -1,6 +1,6 @@
-/*防止重复点击重复弹出message弹框 */
-import { Message } from 'element-ui';
-let messageInstance = null;
+/* 防止重复点击重复弹出message弹框 */
+import { Message } from 'element-ui'
+let messageInstance = null
 const resetMessage = (options) => {
   if (messageInstance) {
     messageInstance.close()
@@ -22,4 +22,4 @@ const resetMessage = (options) => {
     return resetMessage(options)
   }
 })
-export const message = resetMessage;
+export const message = resetMessage

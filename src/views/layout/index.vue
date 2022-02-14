@@ -11,13 +11,13 @@ import headerCom from '@/components/header/index'
 export default {
   name: 'Home',
   components: {
-    headerCom,
+    headerCom
   },
   data() {
     return {}
   },
   created() {},
-  methods: {},
+  methods: {}
 }
 </script>
 <style lang="scss">

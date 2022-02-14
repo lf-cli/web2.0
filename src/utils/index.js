@@ -88,16 +88,16 @@ export function debounce(func, wait, immediate) {
   }
 }
 
-//节流 频繁点 设定时间内只会执行一次
+// 节流 频繁点 设定时间内只会执行一次
 export function throttle(fun, wait) {
   let timer
-  let _this = this
+  const _this = this
   return function () {
     if (!timer) {
       fun.apply(_this, arguments)
       timer = setTimeout(() => {
         timer = null
-      }, wait);
+      }, wait)
     }
   }
 }
@@ -131,7 +131,7 @@ export function sleep(time) {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve()
-    }, time);
+    }, time)
   })
 }
 
@@ -155,15 +155,15 @@ export function getQueryObject(url) {
 }
 export function sensorTransform(list) {
   list.forEach(item => {
-    if (item.name == 'no2') {
+    if (item.name === 'no2') {
       item.ename = 'NO<sub>2</sub>'
-    } else if (item.name == 'so2') {
+    } else if (item.name === 'so2') {
       item.ename = 'SO<sub>2</sub>'
-    } else if (item.name == 'o3') {
+    } else if (item.name === 'o3') {
       item.ename = 'O<sub>3</sub>'
-    } else if (item.name == 'pm10') {
+    } else if (item.name === 'pm10') {
       item.ename = 'PM<sub>10</sub>'
-    } else if (item.name == 'pm25') {
+    } else if (item.name === 'pm25') {
       item.ename = 'PM<sub>2.5</sub>'
     }
   })

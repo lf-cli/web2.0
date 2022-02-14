@@ -14,13 +14,13 @@ export default {
   data() {
     return {}
   },
-  created() {},
-  mounted() {},
   computed: {},
   watch: {},
-  methods: {},
+  created() {},
+  mounted() {},
   beforeDestroy() {},
-  activated() {}
+  activated() {},
+  methods: {}
 }
 </script>
 <style lang="scss" scoped>

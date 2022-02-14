@@ -9,9 +9,8 @@ const TOKEN = 'authorization'
 const MAX_TIMEOUT = 20000
 const CONTENT_TYPE_FORM = 'application/x-www-form-urlencoded;charset=UTF-8'
 const CONTENT_TYPE_JSON = 'application/json;charset=UTF-8'
-let reqList = []  //定义请求列表 实现请求不能重复请求
-let cancelList = []  //存放正在请求的取消方法 
-
+const reqList = [] // 定义请求列表 实现请求不能重复请求
+const cancelList = [] // 存放正在请求的取消方法
 
 function getToken() {
   return localStorage.getItem(TOKEN)
@@ -32,7 +31,7 @@ function stopRepeatRequest(reqList, url, cancel, errorMsg, allowRepeatRequest) {
   const errMsg = errorMsg || ''
   cancelList.push(cancel)
   if (reqList.indexOf(url) > -1 && !allowRepeatRequest) {
-    //如果该请求已经发起过，就把该请求取消
+    // 如果该请求已经发起过，就把该请求取消
     cancel(errMsg)
     return
   }
@@ -44,13 +43,13 @@ function stopRepeatRequest(reqList, url, cancel, errorMsg, allowRepeatRequest) {
  * @param {array} reqList 全部请求列表
  * @param {string} url 请求地址
  */
-function allowRequest(reqList, url,) {
-  let reqIndex = reqList.findIndex(exitUrl => exitUrl == url)
+function allowRequest(reqList, url) {
+  const reqIndex = reqList.findIndex(exitUrl => exitUrl === url)
   reqList.splice(reqIndex, 1)
 }
 
-/** 
-取消所有正在进行的请求 比如切换页面了 将当前还在进行的请求取消掉 
+/**
+取消所有正在进行的请求 比如切换页面了 将当前还在进行的请求取消掉
 */
 function cancelReq() {
   cancelList.forEach(func => func('取消请求'))
@@ -60,20 +59,20 @@ function cancelReq() {
  * 相当于一个异步并发 控制请求的数量 当每个请求请求体都很大时 同时发起多个请求可能导致网页崩溃
  * @param {Array} reqList 所有请求的请求列表
  * @param {Number} max 最大同时请求数量
- * @returns 
+ * @returns
  */
 export function sendRequest(reqList, max = 4) {
-  let len = reqList.length
+  const len = reqList.length
   let counter = 0
 
   return new Promise((resolve, reject) => {
     async function start() {
-      let options = {
+      const options = {
         allowRepeatRequest: true
       }
       while (counter < len && max > 0) {
         max--
-        let { url, data } = reqList[counter]
+        const { url, data } = reqList[counter]
         counter++
         post(url, data, options).then(res => {
           max++
@@ -94,20 +93,19 @@ export function sendRequest(reqList, max = 4) {
 }
 
 /**
- * 
- * @param {*} params 
- * @returns 
+ *
+ * @param {*} params
+ * @returns
  */
 
-
-/** 
+/**
  * @param {object} params
 */
 function buildHttpClient(params) {
   const service = axios.create({
     baseURL: params.baseURL,
-    withCredentials: true,//允许带cookie
-    timeout: MAX_TIMEOUT,
+    withCredentials: true, // 允许带cookie
+    timeout: MAX_TIMEOUT
   })
 
   let commonParams = {}
@@ -116,10 +114,10 @@ function buildHttpClient(params) {
     config.cancelToken = new axios.CancelToken(c => cancel = c)
 
     config.onUploadProgress = function (e) {
-      //可以通过store将值传回使用的页面
+      // 可以通过store将值传回使用的页面
       return parseInt(e.loaded / e.total)
     }
-    //为请求加上公共请求参数 比如某些请求需要加上统一的key或者secretId等情况
+    // 为请求加上公共请求参数 比如某些请求需要加上统一的key或者secretId等情况
     if (config.method === 'post') {
       let data
       if (Array.isArray(config.data)) {
@@ -146,7 +144,7 @@ function buildHttpClient(params) {
     return config
   })
 
-  //前后端可以约定返回的数据结构形式,这里需要根据公司情况而定，比如：
+  // 前后端可以约定返回的数据结构形式,这里需要根据公司情况而定，比如：
   /* {
     code:0 //成功
     data:data,
@@ -156,7 +154,7 @@ function buildHttpClient(params) {
     //  设置延时是因为不让短时间内多次请求一个接口
     setTimeout(() => {
       allowRequest(reqList, response.config.url)
-    }, 300);
+    }, 300)
     if (response.status !== 200) {
       Message({
         message: response.message || '请求失败',
@@ -177,18 +175,17 @@ function buildHttpClient(params) {
     } else {
       return response.data
     }
-
   }, error => {
-    //失败了也要把reqList中该请求删除
+    // 失败了也要把reqList中该请求删除
     setTimeout(() => {
-      console.log(error);
+      console.log(error)
       allowRequest(reqList, error.config ? error.config.url : '')
-    }, 300);
+    }, 300)
     if (error.toString().indexOf('401') > -1) {
       error.message = 'token过期，请重新登录'
       setTimeout(() => {
         jumToLogin()
-      }, 200);
+      }, 200)
       localStorage.removeItem(TOKEN)
     }
     Message({
@@ -221,7 +218,7 @@ function buildHttpClient(params) {
  * @param allowRepeatRequest  是否允许重复请求
  */
 function request(url, params, method, options) {
-  let defaultOptions = {
+  const defaultOptions = {
     loading: false,
     showError: true,
     ContentType: 'json',
@@ -233,10 +230,10 @@ function request(url, params, method, options) {
   }
   options = Object.assign(defaultOptions, options)
   let loadingInstance
-  let instance = buildHttpClient(options)
-  /* 
+  const instance = buildHttpClient(options)
+  /*
   可以通过options的参数来设置统一的参数
-  instance.setCommonParams({ appId: '123456' }) 
+  instance.setCommonParams({ appId: '123456' })
   */
 
   if (options.loading) {
@@ -255,7 +252,7 @@ function request(url, params, method, options) {
       method,
       ...data
     }).then(res => {
-      //这里可以对返回的数据结构进行处理，比如日期，金额，数字等等
+      // 这里可以对返回的数据结构进行处理，比如日期，金额，数字等等
       /* if (res.code === 0) {
         let data = delTime(res.data)  //将返回的时间处理为时间字符串
         resolve(data)
@@ -283,10 +280,10 @@ function request(url, params, method, options) {
  * */
 
 function delTime(data) {
-  if (!data || typeof (data) != 'object') {
+  if (!data || typeof (data) !== 'object') {
     return
   }
-  let result = Array.isArray(data) ? [] : {}
+  const result = Array.isArray(data) ? [] : {}
   Object.keys(data).forEach(key => {
     if (data[key] && typeof (data[key]) === 'object') {
       result[key] = delTime(data[key])
@@ -305,24 +302,24 @@ function delTime(data) {
  * @param {object} requestParams
  * @param {string} url  请求地址
  * @param {object} params 请求参数
- * @param {object} options? 本次请求配置 可不写 
- * 
+ * @param {object} options? 本次请求配置 可不写
+ *
  */
 export function post(requestParams) {
-  let { url, data, options } = requestParams
+  const { url, data, options } = requestParams
   return request(url, data, 'post', options)
 }
 export function del(requestParams) {
-  let { url, data, options } = requestParams
+  const { url, data, options } = requestParams
   return request(url, data, 'delete', options)
 }
 /**
  * 创建get请求
  * @param {requestParams}
- * 
+ *
  */
 export function get(requestParams) {
-  let { url, params, options } = requestParams
+  const { url, params, options } = requestParams
   return request(url, params, 'get', options)
 }
 

@@ -10,7 +10,7 @@ export default {
     return {}
   },
   created() {},
-  methods: {},
+  methods: {}
 }
 </script>
 <style lang="scss">

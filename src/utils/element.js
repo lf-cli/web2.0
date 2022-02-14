@@ -1,4 +1,4 @@
-//这是我们常用的elementui组件 局部引入 避免包过大影响加载速度
+// 这是我们常用的elementui组件 局部引入 避免包过大影响加载速度
 import { Button, Loading, MessageBox, Select, Option, Tree, Input, Table, TableColumn, Pagination, DatePicker } from 'element-ui'
 import { message } from '@/utils/message.js'
 

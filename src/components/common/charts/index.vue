@@ -1,16 +1,12 @@
 <template>
-  <div
-    :class="className"
-    :id="id"
-    :style="{ width: width, height: height }"
-  ></div>
+  <div :id="id" :class="className" :style="{ width: width, height: height }" />
 </template>
 
 <script>
-//公共echart组件 只需要传入组件名字 大小 以及option即可生成组件 不用再去获取组件dom结构 也不用管组件的resize逻辑等
+// 公共echart组件 只需要传入组件名字 大小 以及option即可生成组件 不用再去获取组件dom结构 也不用管组件的resize逻辑等
 import resize from './mixins/index'
 export default {
-  name: 'chart',
+  name: 'Chart',
   mixins: [resize],
   props: {
     id: {
@@ -31,19 +27,19 @@ export default {
       type: String
     },
     option: {
-      default: {},
+      default: () => {},
       type: Object,
       required: true
-    }
-  },
-  watch: {
-    option() {
-      this.initChart()
     }
   },
   data() {
     return {
       chart: null
+    }
+  },
+  watch: {
+    option() {
+      this.initChart()
     }
   },
   beforeDestroy() {
@@ -67,9 +63,9 @@ export default {
     },
     getCommonOptions() {
       return {
-        color: ['#FFE18F', '#00FFFF', '#556FB5'], //图表各数据的颜色
+        color: ['#FFE18F', '#00FFFF', '#556FB5'], // 图表各数据的颜色
         tooltip: {
-          //鼠标移入的时候显示的信息
+          // 鼠标移入的时候显示的信息
           trigger: 'axis',
           axisPointer: {
             lineStyle: {
@@ -78,7 +74,7 @@ export default {
           }
         },
         grid: {
-          //chart距离容器四周的距离
+          // chart距离容器四周的距离
           top: '5%',
           left: '5%',
           right: '5%',

@@ -13,11 +13,11 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-    console.log(config);
+    console.log(config)
     if (!localStorage.getItem('authorization') && router.currentRoute.path != '/') {
       setTimeout(() => {
         router.push('/')
-      }, 1000);
+      }, 1000)
     }
     config.headers['authorization'] = localStorage.getItem('authorization')
     return config
