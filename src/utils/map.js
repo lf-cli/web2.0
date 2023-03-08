@@ -99,8 +99,8 @@ export function marsTobaidu(mars_point) {
   const baidu_point = { lon: 0, lat: 0 }
   const x = mars_point.lon
   const y = mars_point.lat
-  const z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi)
-  const theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi)
+  const z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_PI)
+  const theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_PI)
   baidu_point.lon = z * Math.cos(theta) + 0.0065
   baidu_point.lat = z * Math.sin(theta) + 0.006
   return baidu_point
@@ -111,17 +111,17 @@ export function baiduTomars(baidu_point) {
   const mars_point = { lon: 0, lat: 0 }
   const x = baidu_point.lon - 0.0065
   const y = baidu_point.lat - 0.006
-  const z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_pi)
-  const theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * x_pi)
+  const z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_PI)
+  const theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * x_PI)
   mars_point.lon = z * Math.cos(theta)
   mars_point.lat = z * Math.sin(theta)
   return mars_point
 }
 
 // 地球坐标系 （WGS84）转火星坐标系 （GCJ02）
-export function wgs84togcj02(lng, lat) {
-  var lat = +lat
-  var lng = +lng
+export function wgs84togcj02(lng1, lat1) {
+  const lat = +lat1
+  const lng = +lng1
   if (out_of_china(lng, lat)) {
     return [lng, lat]
   } else {
@@ -139,9 +139,9 @@ export function wgs84togcj02(lng, lat) {
   }
 }
 
-function transformlat(lng, lat) {
-  var lat = +lat
-  var lng = +lng
+function transformlat(lng1, lat1) {
+  const lat = +lat1
+  const lng = +lng1
   let ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + 0.1 * lng * lat + 0.2 * Math.sqrt(Math.abs(lng))
   ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0
   ret += (20.0 * Math.sin(lat * PI) + 40.0 * Math.sin(lat / 3.0 * PI)) * 2.0 / 3.0
@@ -149,18 +149,18 @@ function transformlat(lng, lat) {
   return ret
 }
 
-function transformlng(lng, lat) {
-  var lat = +lat
-  var lng = +lng
+function transformlng(lng1, lat1) {
+  const lat = +lat1
+  const lng = +lng1
   let ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + 0.1 * lng * lat + 0.1 * Math.sqrt(Math.abs(lng))
   ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0
   ret += (20.0 * Math.sin(lng * PI) + 40.0 * Math.sin(lng / 3.0 * PI)) * 2.0 / 3.0
   ret += (150.0 * Math.sin(lng / 12.0 * PI) + 300.0 * Math.sin(lng / 30.0 * PI)) * 2.0 / 3.0
   return ret
 }
-function out_of_china(lng, lat) {
-  var lat = +lat
-  var lng = +lng
+function out_of_china(lng1, lat1) {
+  const lat = +lat1
+  const lng = +lng1
   // 纬度3.86~53.55,经度73.66~135.05
   return !(lng > 73.66 && lng < 135.05 && lat > 3.86 && lat < 53.55)
 }
@@ -214,11 +214,11 @@ export function setBaseMap(img) {
   // let baseAuther = [350, 380]
   const baseSize = [455, 553] // 以屏幕分辨率1440为基准 此时图片大小应该是700*774 以此比例适配
   const baseAuther = [225, 350]
-  const body = document.body.getClientRects()
-  const { width, height } = body[0]
-  const scaleTimes = width / 1440
-  const curSize = [700 * scaleTimes, 774 * scaleTimes]
-  const curAuther = [350 * scaleTimes, 380 * scaleTimes]
+  // const body = document.body.getClientRects()
+  // const { width, height } = body[0]
+  // const scaleTimes = width / 1440
+  // const curSize = [700 * scaleTimes, 774 * scaleTimes]
+  // const curAuther = [350 * scaleTimes, 380 * scaleTimes]
   const zoomStyleMapping1 = { // 地图不同级别下 对应使用第几个样式
     5: 0,
     6: 0,
@@ -330,7 +330,6 @@ export function searchDistrict(districtArray, curStyle) {
       for (let i = 0; i < districtArray.length; i++) {
         district.search(districtArray[i], (status, result) => {
           const bounds = result.districtList[0].boundaries
-          const polygons = []
           if (bounds) {
             for (let i = 0, l = bounds.length; i < l; i++) {
               // 生成行政区划polygon
@@ -375,10 +374,9 @@ export function placeSearch(cityCode, keywords) {
 
 // 测距函数  plugin=AMap.RangingTool  使用的时候用call改变this指向 rangingTool.call(this)
 export function rangingTool() {
-  let ruler1, ruler2
   // 地图初始化
   // 默认样式
-  ruler1 = new AMap.RangingTool(this.map)
+  const ruler1 = new AMap.RangingTool(this.map)
 
   // 自定义样式
   const startMarkerOptions = {
@@ -416,7 +414,8 @@ export function rangingTool() {
     endMarkerOptions: endMarkerOptions,
     lineOptions: lineOptions
   }
-  ruler2 = new AMap.RangingTool(map, rulerOptions)
+  // eslint-disable-next-line no-unused-vars
+  const ruler2 = new AMap.RangingTool(this.map, rulerOptions)
 
   ruler1.turnOn()
 

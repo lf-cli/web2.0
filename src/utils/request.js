@@ -105,7 +105,9 @@ function buildHttpClient(params) {
   const service = axios.create({
     baseURL: params.baseURL,
     withCredentials: true, // 允许带cookie
-    timeout: MAX_TIMEOUT
+    timeout: MAX_TIMEOUT,
+    responseType: params.responseType || 'json',
+    paramsSerializer: (params) => qs.stringify(params, { indices: false })
   })
 
   let commonParams = {}
